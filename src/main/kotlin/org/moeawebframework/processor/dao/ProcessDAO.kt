@@ -1,10 +1,10 @@
 package org.moeawebframework.processor.dao
 
+import org.moeawebframework.processor.entities.Process
 import org.moeawebframework.processor.repositories.ProcessRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import org.moeawebframework.processor.entities.Process
 
 @Repository
 class ProcessDAO(

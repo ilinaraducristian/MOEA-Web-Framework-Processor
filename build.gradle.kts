@@ -18,22 +18,23 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-	implementation("org.springframework.boot:spring-boot-starter-rsocket")
-	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.moeaframework:moeaframework:2.13")
-	runtimeOnly("com.h2database:h2")
-	runtimeOnly("dev.miku:r2dbc-mysql")
-	runtimeOnly("io.r2dbc:r2dbc-h2")
-	runtimeOnly("mysql:mysql-connector-java")
-	testImplementation("org.springframework.boot:spring-boot-starter-test") {
-		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-	}
-	testImplementation("io.projectreactor:reactor-test")
+  implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+  implementation("org.springframework.boot:spring-boot-starter-rsocket")
+  implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("org.moeaframework:moeaframework:2.13")
+  implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+  implementation("org.jetbrains.kotlin:kotlin-reflect")
+  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+  runtimeOnly("com.h2database:h2")
+  runtimeOnly("dev.miku:r2dbc-mysql")
+  runtimeOnly("io.r2dbc:r2dbc-h2")
+  runtimeOnly("mysql:mysql-connector-java")
+  testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+  }
+  testImplementation("io.projectreactor:reactor-test")
 }
 
 tasks.withType<Test> {
