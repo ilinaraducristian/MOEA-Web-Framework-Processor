@@ -1,1 +1,1 @@
-rootProject.name = "processor"
+rootProject.name = "moeawebframework-processor"
