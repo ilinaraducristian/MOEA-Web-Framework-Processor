@@ -5,7 +5,7 @@ import org.moeaframework.core.PopulationIO
 import org.moeaframework.core.Problem
 import org.moeaframework.core.spi.ProblemProvider
 import org.moeawebframework.processor.ProcessorApplication
-import org.moeawebframework.processor.getFromCDN
+import org.moeawebframework.processor.configurations.getFromCDN
 import org.springframework.http.HttpStatus
 import java.io.BufferedReader
 import java.io.StringReader
@@ -28,7 +28,7 @@ class CDNProblemProvider : ProblemProvider() {
   }
 
   override fun getReferenceSet(sha256: String): NondominatedPopulation? {
-try {
+    try {
       if (!sha256.contains("#")) return null
       val referenceSetSha256 = sha256.split("#")[1]
       val clientResponse = getFromCDN(referenceSetSha256).block()!!

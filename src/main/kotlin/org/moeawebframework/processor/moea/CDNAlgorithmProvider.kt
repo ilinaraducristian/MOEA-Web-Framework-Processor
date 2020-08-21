@@ -4,9 +4,8 @@ import org.moeaframework.core.Algorithm
 import org.moeaframework.core.Problem
 import org.moeaframework.core.spi.AlgorithmProvider
 import org.moeawebframework.processor.ProcessorApplication
-import org.moeawebframework.processor.getFromCDN
+import org.moeawebframework.processor.configurations.getFromCDN
 import org.springframework.http.HttpStatus
-import java.lang.Exception
 import java.util.*
 
 class CDNAlgorithmProvider : AlgorithmProvider() {

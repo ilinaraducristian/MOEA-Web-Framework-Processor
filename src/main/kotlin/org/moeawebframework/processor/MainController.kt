@@ -6,8 +6,6 @@ import org.moeawebframework.processor.entities.Process
 import org.springframework.data.redis.core.ReactiveRedisTemplate
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.stereotype.Controller
-import org.springframework.web.reactive.function.client.ClientResponse
-import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import java.util.concurrent.ExecutorService
 
@@ -48,10 +46,4 @@ class MainController(
     }
   }
 
-}
-
-fun getFromCDN(sha256: String): Mono<ClientResponse> {
-  return WebClient.create("http://localhost:8070/$sha256")
-      .get()
-      .exchange()
 }
