@@ -17,6 +17,7 @@ spring:
 logging.level.org.springframework.data.r2dbc: DEBUG
 
 CDN_URI: 'localhost:8070'
+R2DBC_URI: 'r2dbc:h2:mem:///test?options=DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=FALSE'
 
 ---
 
@@ -32,12 +33,6 @@ spring:
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
-  # MySQL
-#  jpa:
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.MySQLInnoDBDialect
-#  datasource:
-#    url: jdbc:h2:file:/db
 
 CDN_URI: ${CDN_URI}
+R2DBC_URI: ${R2DBC_URI}

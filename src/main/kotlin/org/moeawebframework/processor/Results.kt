@@ -13,7 +13,21 @@ internal class Results {
 
   private var currentSeed = 0
   private val results = HashMap<String, ArrayList<ArrayList<Double>>>()
-  fun update(progressEvent: ProgressEvent) {
+
+  init {
+    results["R1Indicator"] = ArrayList()
+    results["AdditiveEpsilonIndicator"] = ArrayList()
+    results["R2Indicator"] = ArrayList()
+    results["GenerationalDistance"] = ArrayList()
+    results["Hypervolume"] = ArrayList()
+    results["Spacing"] = ArrayList()
+    results["R3Indicator"] = ArrayList()
+    results["InvertedGenerationalDistance"] = ArrayList()
+    results["ElapsedTime"] = ArrayList()
+    results["Contribution"] = ArrayList()
+  }
+
+  fun update(progressEvent: ProgressEvent): String {
     val accumulator = progressEvent.executor.instrumenter.lastAccumulator
     val i = accumulator.size("NFE") - 1
     currentSeed = progressEvent.currentSeed - 1
@@ -21,6 +35,22 @@ internal class Results {
       results.forEach { (_: String, arrayLists: ArrayList<ArrayList<Double>>) -> arrayLists.add(ArrayList()) }
     }
     results.forEach { (s: String, arrayLists: ArrayList<ArrayList<Double>>) -> if (s == "ElapsedTime") arrayLists[currentSeed].add(accumulator["Elapsed Time", i] as Double) else arrayLists[currentSeed].add(accumulator[s, i] as Double) }
+    return currentSeedToJson()
+  }
+
+  private fun currentSeedToJson(): String {
+    val json: ObjectNode = objectMapper.createObjectNode()
+    json.putPOJO("R1Indicator", results["R1Indicator"]!![currentSeed])
+    json.putPOJO("AdditiveEpsilonIndicator", results["AdditiveEpsilonIndicator"]!![currentSeed])
+    json.putPOJO("R2Indicator", results["R2Indicator"]!![currentSeed])
+    json.putPOJO("GenerationalDistance", results["GenerationalDistance"]!![currentSeed])
+    json.putPOJO("Hypervolume", results["Hypervolume"]!![currentSeed])
+    json.putPOJO("Spacing", results["Spacing"]!![currentSeed])
+    json.putPOJO("R3Indicator", results["R3Indicator"]!![currentSeed])
+    json.putPOJO("InvertedGenerationalDistance", results["InvertedGenerationalDistance"]!![currentSeed])
+    json.putPOJO("ElapsedTime", results["ElapsedTime"]!![currentSeed])
+    json.putPOJO("Contribution", results["Contribution"]!![currentSeed])
+    return json.toString()
   }
 
   fun toJson(): String {
@@ -40,16 +70,4 @@ internal class Results {
     return json.toString()
   }
 
-  init {
-    results["R1Indicator"] = ArrayList()
-    results["AdditiveEpsilonIndicator"] = ArrayList()
-    results["R2Indicator"] = ArrayList()
-    results["GenerationalDistance"] = ArrayList()
-    results["Hypervolume"] = ArrayList()
-    results["Spacing"] = ArrayList()
-    results["R3Indicator"] = ArrayList()
-    results["InvertedGenerationalDistance"] = ArrayList()
-    results["ElapsedTime"] = ArrayList()
-    results["Contribution"] = ArrayList()
-  }
 }

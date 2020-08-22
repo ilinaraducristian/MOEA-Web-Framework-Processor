@@ -1,1 +1,47 @@
-spring.rsocket.server.port: 7000
+spring:
+  profiles:
+    active: dev
+  # Uploading files
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 128KB
+      max-request-size: 128KB
+
+---
+
+spring:
+  rsocket.server.port: 7000
+  profiles: dev
+
+logging.level.org.springframework.data.r2dbc: DEBUG
+
+CDN_URI: 'localhost:8070'
+R2DBC_URI: 'localhost:8070'
+
+---
+
+spring:
+  profiles: prod
+  r2dbc:
+    url: 'r2dbc:postgresql://localhost:5432/moeawebframework'
+  # RabbitMQ
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+  #Redis
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+  # MySQL
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQLInnoDBDialect
+#  datasource:
+#    url: jdbc:h2:file:/db
+
+CDN_URI: ${CDN_URI}
+R2DBC_URI: ${R2DBC_URI}

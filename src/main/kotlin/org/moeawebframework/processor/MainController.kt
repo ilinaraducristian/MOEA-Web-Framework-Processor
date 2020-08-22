@@ -16,7 +16,7 @@ class MainController(
     private val executorService: ExecutorService
 ) {
 
-  @MessageMapping("processor")
+  @MessageMapping("process")
   fun process(process: Mono<Process>): Mono<Unit> {
     return process.flatMap {
       try {
@@ -44,6 +44,13 @@ class MainController(
       }
       Mono.empty<Unit>()
     }
+  }
+
+  @MessageMapping("cancel")
+  fun cancel(rabbitId: String): Mono<Unit> {
+    return Mono.justOrEmpty(processors[rabbitId])
+        .switchIfEmpty(Mono.error(RuntimeException(ProcessNotFoundException)))
+        .map { it.cancel() }
   }
 
 }
