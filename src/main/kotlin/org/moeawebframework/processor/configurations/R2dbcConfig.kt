@@ -16,11 +16,11 @@ import org.springframework.data.r2dbc.connectionfactory.init.ResourceDatabasePop
 @Configuration
 class R2dbcConfig : AbstractR2dbcConfiguration() {
 
-  @Value("\${R2DBC_URI}")
-  lateinit var R2DBC_URI: String
+  @Value("\${r2dbc_uri}")
+  lateinit var r2dbc_uri: String
 
   override fun connectionFactory(): ConnectionFactory {
-    return ConnectionFactories.get(R2DBC_URI)
+    return ConnectionFactories.get(r2dbc_uri)
   }
 
   @Bean
