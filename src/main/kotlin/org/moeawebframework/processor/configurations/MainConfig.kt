@@ -11,14 +11,14 @@ import reactor.core.publisher.Mono
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-var cdn_uri = ""
+var cdn_url = ""
 
 @Configuration
 class MainConfig {
 
-  @Value("cdn_uri")
-  fun setcdn_uri(cdnUri: String) {
-    cdn_uri = cdnUri
+  @Value("cdn_url")
+  fun setcdn_url(cdnUri: String) {
+    cdn_url = cdnUri
   }
 
   @Bean
@@ -30,7 +30,7 @@ class MainConfig {
 }
 
 fun getFromCDN(sha256: String): Mono<ClientResponse> {
-  return WebClient.create("$cdn_uri/$sha256")
+  return WebClient.create("$cdn_url/$sha256")
       .get()
       .exchange()
 }

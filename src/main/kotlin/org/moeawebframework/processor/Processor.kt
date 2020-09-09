@@ -1,9 +1,9 @@
 package org.moeawebframework.processor
 
 import org.moeaframework.Executor
-import org.moeaframework.Instrumenter
 import org.moeaframework.util.progress.ProgressEvent
 import org.moeawebframework.processor.entities.Process
+import org.moeawebframework.processor.moea.Instrumenter
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import reactor.core.publisher.Mono
@@ -46,10 +46,6 @@ class Processor(val newProcess: Process) {
         }
     val referenceSetSha256 = newProcess.referenceSetSha256
     if (referenceSetSha256.isEmpty()) instrumenter.withProblem(newProcess.problemSha256) else instrumenter.withProblem(newProcess.problemSha256 + "#" + newProcess.referenceSetSha256)
-//    try {
-//      instrumenter.withEpsilon(EpsilonHelper.getEpsilon(problem))
-//    } catch (ignored: Exception) {
-//    }
     executor.withAlgorithm(newProcess.algorithmSha256)
     executor.withSameProblemAs(instrumenter)
   }

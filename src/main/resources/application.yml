@@ -11,13 +11,16 @@ spring:
 ---
 
 spring:
-  rsocket.server.port: 7000
   profiles: dev
+  r2dbc:
+    # R2DBC_URI: 'r2dbc:h2:mem:///test?options=DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=FALSE'
+    url: "r2dbc:postgresql://localhost/moeawebframework"
+    username: "postgres"
+    password: "postgres"
 
 logging.level.org.springframework.data.r2dbc: DEBUG
 
-cdn_uri: 'localhost:8070'
-r2dbc_uri: 'r2dbc:h2:mem:///test?options=DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=FALSE'
+cdn_url: 'localhost:8070'
 
 ---
 
@@ -34,5 +37,4 @@ spring:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
 
-cdn_uri: ${CDN_URI}
-r2dbc_uri: ${R2DBC_URI}
+cdn_url: ${CDN_URI}

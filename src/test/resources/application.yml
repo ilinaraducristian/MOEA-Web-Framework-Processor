@@ -16,7 +16,7 @@ spring:
 
 logging.level.org.springframework.data.r2dbc: DEBUG
 
-cdn_uri: 'localhost:8070'
+cdn_url: 'localhost:8070'
 r2dbc_uri: 'localhost:8070'
 
 ---
@@ -43,5 +43,5 @@ spring:
 #  datasource:
 #    url: jdbc:h2:file:/db
 
-cdn_uri: ${cdn_uri}
+cdn_url: ${cdn_url}
 r2dbc_uri: ${r2dbc_uri}
