@@ -18,32 +18,44 @@ class MainController(
 
   @MessageMapping("process")
   fun process(process: Mono<Process>): Mono<Unit> {
+    println("ceva?")
     return process.flatMap {
+      println("ce?")
       try {
         return@flatMap Mono.just(Processor(it))
       } catch (e: Exception) {
         return@flatMap Mono.error<Processor>(e)
       }
-    }.flatMap {
+    }.doOnNext { processor ->
+      println("ce2?")
       executorService.submit {
+        println("1")
         try {
-          it.process()
-          val newProcess = it.newProcess
-          newProcess.results = it.getResults()
+          println("2")
+          processor.process()
+          println("3")
+          val newProcess = processor.newProcess
+          newProcess.results = processor.getResults()
+          println("4")
           newProcess.status = "processed"
+          println("Process?1")
           if (newProcess.userId == null) {
             redisTemplate.opsForValue().set(newProcess.rabbitId, newProcess).block()
+            println("Process?2")
           } else {
-            processDAO.save(it.newProcess).block()
+            processDAO.save(processor.newProcess).block()
+            println("Process?3")
           }
+          println("Process?4")
         } catch (e: Exception) {
-          it.newProcess.status = "waiting"
-          println("Exception in processor, it should never happen:")
+          println("Process?5")
+          processor.newProcess.status = "waiting"
+          println("Exception in processor, it should never happen")
           e.printStackTrace()
         }
       }
-      Mono.empty<Unit>()
     }
+        .map { }
   }
 
   @MessageMapping("cancel")

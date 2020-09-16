@@ -12,6 +12,7 @@ spring:
 
 spring:
   profiles: dev
+  rsocket.server.port: 7000
   r2dbc:
     # R2DBC_URI: 'r2dbc:h2:mem:///test?options=DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=FALSE'
     url: "r2dbc:postgresql://localhost/moeawebframework"
