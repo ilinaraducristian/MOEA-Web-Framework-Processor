@@ -22,7 +22,6 @@ class CDNProblemProvider : ProblemProvider() {
       val problemClass = BytesClassLoader<Problem>(ProcessorApplication::class.java.classLoader).loadClassFromBytes(problemBytes)
       return problemClass.getDeclaredConstructor().newInstance()
     } catch (e: Exception) {
-      e.printStackTrace()
       return null
     }
   }

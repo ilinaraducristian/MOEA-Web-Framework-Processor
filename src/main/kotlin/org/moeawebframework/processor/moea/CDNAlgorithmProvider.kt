@@ -17,8 +17,7 @@ class CDNAlgorithmProvider : AlgorithmProvider() {
       if (clientResponse.statusCode() == HttpStatus.NOT_FOUND) return null
       val algorithmClass = BytesClassLoader<Algorithm>(ProcessorApplication::class.java.classLoader).loadClassFromBytes(algorithmBytes)
       return algorithmClass.getConstructor(Properties::class.java, Problem::class.java).newInstance(properties, problem)
-    } catch (e: Exception) {
-      e.printStackTrace()
+    } catch (ignored: Exception) {
       return null
     }
   }

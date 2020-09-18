@@ -3,18 +3,22 @@ package org.moeawebframework.processor
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.moeaframework.util.progress.ProgressEvent
-import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
-internal class Results {
+class Results {
 
-  @Autowired
-  lateinit var objectMapper: ObjectMapper
+  private val objectMapper = ObjectMapper()
 
   private var currentSeed = 0
   private val results = HashMap<String, ArrayList<ArrayList<Double>>>()
 
   init {
+    // These values are present in the instrumenter, should we collect them?
+//    EpsilonProgress
+//    AdaptiveMultimethodVariation
+//    AdaptiveTimeContinuation
+//    ApproximationSet
+//    PopulationSize
     results["R1Indicator"] = ArrayList()
     results["AdditiveEpsilonIndicator"] = ArrayList()
     results["R2Indicator"] = ArrayList()
