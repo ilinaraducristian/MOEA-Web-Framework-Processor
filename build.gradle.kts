@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.3.3.RELEASE"
-	id("io.spring.dependency-management") version "1.0.10.RELEASE"
-	idea
-	kotlin("jvm") version "1.3.72"
-	kotlin("plugin.spring") version "1.3.72"
+  id("org.springframework.boot") version "2.3.3.RELEASE"
+  id("io.spring.dependency-management") version "1.0.10.RELEASE"
+  idea
+  kotlin("jvm") version "1.3.72"
+  kotlin("plugin.spring") version "1.3.72"
 }
 
 group = "org.moeawebframework"
@@ -13,7 +13,7 @@ version = "1.0"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
-	mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
@@ -34,25 +34,26 @@ dependencies {
 
   runtimeOnly("com.h2database:h2")
   runtimeOnly("org.postgresql:postgresql")
-  runtimeOnly("io.r2dbc:r2dbc-h2")
-  runtimeOnly("io.r2dbc:r2dbc-postgresql")
+  implementation("io.r2dbc:r2dbc-h2")
+  implementation("io.r2dbc:r2dbc-postgresql")
 
   developmentOnly("org.springframework.boot:spring-boot-devtools")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
   }
+  testImplementation("com.github.kstyrc:embedded-redis:0.6")
   testImplementation("io.projectreactor:reactor-test")
   testImplementation("org.springframework.amqp:spring-rabbit-test")
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+  useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "11"
-	}
+  kotlinOptions {
+    freeCompilerArgs = listOf("-Xjsr305=strict")
+    jvmTarget = "11"
+  }
 }

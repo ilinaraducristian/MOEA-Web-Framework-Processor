@@ -12,11 +12,11 @@ import java.io.StringReader
 
 class CDNProblemProvider : ProblemProvider() {
 
-  override fun getProblem(sha256: String): Problem? {
+  override fun getProblem(md5: String): Problem? {
     try {
-      if (!sha256.contains("#")) return null
-      val problemSha256 = sha256.split("#")[0]
-      val clientResponse = MainConfig.getFromCDN(problemSha256).block()!!
+      if (!md5.contains("#")) return null
+      val problemMD5 = md5.split("#")[0]
+      val clientResponse = MainConfig.getFromCDN(problemMD5).block()!!
       val problemBytes = clientResponse.bodyToMono(ByteArray::class.java).block()!!
       if (clientResponse.statusCode() == HttpStatus.NOT_FOUND) return null
       val problemClass = BytesClassLoader<Problem>(ProcessorApplication::class.java.classLoader).loadClassFromBytes(problemBytes)
@@ -26,11 +26,11 @@ class CDNProblemProvider : ProblemProvider() {
     }
   }
 
-  override fun getReferenceSet(sha256: String): NondominatedPopulation? {
+  override fun getReferenceSet(md5: String): NondominatedPopulation? {
     try {
-      if (!sha256.contains("#")) return null
-      val referenceSetSha256 = sha256.split("#")[1]
-      val clientResponse = MainConfig.getFromCDN(referenceSetSha256).block()!!
+      if (!md5.contains("#")) return null
+      val referenceSetMD5 = md5.split("#")[1]
+      val clientResponse = MainConfig.getFromCDN(referenceSetMD5).block()!!
       val referenceSetString = clientResponse.bodyToMono(String::class.java).block()!!
       if (clientResponse.statusCode() == HttpStatus.NOT_FOUND) return null
       return NondominatedPopulation(PopulationIO.readObjectives(BufferedReader(StringReader(referenceSetString))))

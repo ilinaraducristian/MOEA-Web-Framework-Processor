@@ -1,12 +1,6 @@
 spring:
   profiles:
     active: dev
-  # Uploading files
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 128KB
-      max-request-size: 128KB
 
 ---
 

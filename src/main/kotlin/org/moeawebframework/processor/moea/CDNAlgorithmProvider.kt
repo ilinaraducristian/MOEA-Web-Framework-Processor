@@ -10,9 +10,9 @@ import java.util.*
 
 class CDNAlgorithmProvider : AlgorithmProvider() {
 
-  override fun getAlgorithm(sha256: String, properties: Properties, problem: Problem): Algorithm? {
+  override fun getAlgorithm(md5: String, properties: Properties, problem: Problem): Algorithm? {
     try {
-      val clientResponse = MainConfig.getFromCDN(sha256).block()
+      val clientResponse = MainConfig.getFromCDN(md5).block()
       val algorithmBytes = clientResponse!!.bodyToMono(ByteArray::class.java).block()!!
       if (clientResponse.statusCode() == HttpStatus.NOT_FOUND) return null
       val algorithmClass = BytesClassLoader<Algorithm>(ProcessorApplication::class.java.classLoader).loadClassFromBytes(algorithmBytes)

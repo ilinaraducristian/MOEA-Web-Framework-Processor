@@ -1,18 +1,31 @@
 package org.moeawebframework.processor.dao
 
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactive.awaitSingle
+import org.springframework.data.r2dbc.repository.R2dbcRepository
 
-interface DAO<T> {
+open class DAO<T, ID>(
+    open val r2dbcRepository: R2dbcRepository<T, ID>
+) {
 
-  fun get(id: Long): Mono<T>
+  open suspend fun get(id: ID): T? {
+    return r2dbcRepository.findById(id).awaitFirstOrNull()
+  }
 
-  fun getAll(): Flux<T>
+  open suspend fun getAll(): List<T> {
+    return r2dbcRepository.findAll().collectList().awaitSingle()
+  }
 
-  fun save(t: T): Mono<T>
+  open suspend fun save(t: T): T? {
+    return r2dbcRepository.save(t).awaitFirstOrNull()
+  }
 
-  fun update(t: T, fields: HashMap<String, Any?>): Mono<Void>
+  open suspend fun update(t: T, fields: HashMap<String, Any?>) {
 
-  fun delete(t: T): Mono<Void>
+  }
+
+  open suspend fun delete(t: T) {
+    r2dbcRepository.delete(t).awaitFirstOrNull()
+  }
 
 }
