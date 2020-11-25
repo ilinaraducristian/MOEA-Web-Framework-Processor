@@ -16,25 +16,27 @@ import java.util.concurrent.ExecutorService
 class PublicController(
     private val redisAdapter: RedisAdapter,
     private val rabbitTemplate: RabbitTemplate,
-    private val executorService: ExecutorService
+    private val executorService: ExecutorService,
+    private val processor: Processor
 ) {
 
   @MessageMapping("startProcessing")
   fun startProcessing(queueItem: QueueItem) {
-    val processor = Processor(rabbitTemplate, queueItem)
+    queueItem.status = "processing"
+    runBlocking {
+      redisAdapter.set(queueItem.rabbitId, queueItem)
+    }
     executorService.submit {
       try {
-        processor.startProcessing()
-        val newProcess = processor.queueItem
-        newProcess.results = processor.getResults()
-        newProcess.status = "processed"
+        queueItem.results = processor.startProcessing(queueItem).toJson()
+        queueItem.status = "processed"
         runBlocking {
-          redisAdapter.set(newProcess.rabbitId, newProcess)
+          redisAdapter.set(queueItem.rabbitId, queueItem)
         }
       } catch (e: Exception) {
-        processor.queueItem.status = "waiting"
+        queueItem.status = "waiting"
         runBlocking {
-          redisAdapter.set(processor.queueItem.rabbitId, queueItem)
+          redisAdapter.set(queueItem.rabbitId, queueItem)
         }
         println("Exception in processor, it should never happen")
         e.printStackTrace()

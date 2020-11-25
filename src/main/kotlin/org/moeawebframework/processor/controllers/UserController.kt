@@ -17,27 +17,24 @@ import java.util.concurrent.ExecutorService
 class UserController(
     private val rabbitTemplate: RabbitTemplate,
     private val executorService: ExecutorService,
-    private val queueItemDAO: QueueItemDAO
+    private val queueItemDAO: QueueItemDAO,
+    private val processor: Processor
 ) {
 
   @MessageMapping("startProcessing")
   suspend fun process(queueItem: QueueItem) {
-    val processor = Processor(rabbitTemplate, queueItem)
-    queueItem.status = "working"
     queueItemDAO.save(queueItem)
     executorService.submit {
       try {
-        processor.startProcessing()
-        val newProcess = processor.queueItem
-        newProcess.results = processor.getResults()
-        newProcess.status = "processed"
+        queueItem.results = processor.startProcessing(queueItem).toJson()
+        queueItem.status = "processed"
         runBlocking {
-          queueItemDAO.save(processor.queueItem)
+          queueItemDAO.save(queueItem)
         }
       } catch (e: Exception) {
-        processor.queueItem.status = "waiting"
+        queueItem.status = "waiting"
         runBlocking {
-          queueItemDAO.save(processor.queueItem)
+          queueItemDAO.save(queueItem)
         }
         println("Exception in processor, it should never happen")
         e.printStackTrace()

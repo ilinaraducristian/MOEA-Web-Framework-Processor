@@ -15,7 +15,11 @@ spring:
 
 logging.level.org.springframework.data.r2dbc: DEBUG
 
-cdn_url: 'localhost:8070'
+minio:
+  bucket: moeawebframework
+  accessKey: minioadmin
+  secretKey: minioadmin
+  endpoint: 'localhost:9000'
 
 ---
 

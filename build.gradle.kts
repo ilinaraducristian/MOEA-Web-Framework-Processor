@@ -17,6 +17,9 @@ repositories {
 }
 
 dependencies {
+
+  implementation("io.minio:minio:8.0.0")
+
   implementation("org.springframework.boot:spring-boot-starter-amqp")
   implementation("org.springframework.boot:spring-boot-starter-rsocket")
 
