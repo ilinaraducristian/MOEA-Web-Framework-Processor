@@ -1,7 +1,5 @@
 package org.moeawebframework.processor
 
-import io.minio.GetObjectArgs
-import io.minio.MinioClient
 import org.moeaframework.Executor
 import org.moeaframework.Instrumenter
 import org.moeaframework.algorithm.StandardAlgorithms
@@ -11,13 +9,13 @@ import org.moeaframework.core.PopulationIO
 import org.moeaframework.core.Problem
 import org.moeaframework.core.spi.AlgorithmFactory
 import org.moeaframework.core.spi.ProblemFactory
+import org.moeaframework.core.spi.ProviderNotFoundException
 import org.moeaframework.problem.StandardProblems
 import org.moeawebframework.processor.configurations.default_algorithms
 import org.moeawebframework.processor.configurations.default_problems
 import org.moeawebframework.processor.entities.QueueItem
 import org.moeawebframework.processor.moea.BytesClassLoader
 import org.springframework.amqp.rabbit.core.RabbitTemplate
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.io.BufferedReader
 import java.io.StringReader
@@ -29,11 +27,8 @@ val processors = HashMap<String, Executor>()
 @Component
 class Processor(
     private val rabbitTemplate: RabbitTemplate,
-    private val minioClient: MinioClient
+    private val minioAdapter: MinioAdapter
 ) {
-
-  @Value("\${minio.bucket}")
-  lateinit var bucket: String
 
   private val cdnAlgorithmFactory = CDNAlgorithmFactory()
   private val cdnProblemFactory = CDNProblemFactory()
@@ -54,12 +49,16 @@ class Processor(
 
     if (queueItem.userEntityId == null) {
       executor.withProblem(queueItem.problemMD5)
+      instrumenter.withProblem(queueItem.problemMD5)
     } else {
       if (!default_problems.contains(queueItem.referenceSetMD5)) {
         executor.withProblem("${queueItem.problemMD5}#${queueItem.referenceSetMD5}")
             .usingProblemFactory(cdnProblemFactory)
+        instrumenter.withProblem("${queueItem.problemMD5}#${queueItem.referenceSetMD5}")
+            .usingProblemFactory(cdnProblemFactory)
       } else {
         executor.withProblem(queueItem.problemMD5)
+        instrumenter.withProblem(queueItem.problemMD5)
       }
       if (!default_algorithms.contains(queueItem.algorithmMD5)) {
         executor.usingAlgorithmFactory(cdnAlgorithmFactory)
@@ -71,60 +70,56 @@ class Processor(
     return results
   }
 
-  inner class CDNAlgorithmFactory : AlgorithmFactory() {
+  private inner class CDNAlgorithmFactory : AlgorithmFactory() {
 
-    override fun getAlgorithm(name: String, properties: Properties, problem: Problem): Algorithm? {
+    override fun getAlgorithm(name: String, properties: Properties, problem: Problem?): Algorithm? {
+      var algorithm: Algorithm? = null
       try {
-        val objectArgs = GetObjectArgs.builder()
-            .bucket(bucket)
-            .`object`(name)
-            .build()
-        val algorithmClass = BytesClassLoader<Algorithm>(ProcessorApplication::class.java.classLoader).loadClassFromBytes(minioClient.getObject(objectArgs).readAllBytes())
-        return algorithmClass.getConstructor(Properties::class.java, Problem::class.java).newInstance(properties, problem)
+        if (problem == null) throw RuntimeException("problem is null")
+        val classBytes = minioAdapter.download(name) ?: return null
+        val algorithmClass = BytesClassLoader<Algorithm>(ProcessorApplication::class.java.classLoader).loadClassFromBytes(classBytes)
+        algorithm = algorithmClass.getConstructor(Properties::class.java, Problem::class.java).newInstance(properties, problem)
       } catch (e: Exception) {
       }
-      return try {
-        standardAlgorithms.getAlgorithm(name, properties, problem)
-      } catch (e: Exception) {
-        null
-      }
+      if (algorithm != null) return algorithm
+      return standardAlgorithms.getAlgorithm(name, properties, problem)
+          ?: throw ProviderNotFoundException(name, RuntimeException())
     }
 
   }
 
-  inner class CDNProblemFactory : ProblemFactory() {
+  private inner class CDNProblemFactory : ProblemFactory() {
 
     override fun getProblem(name: String): Problem? {
+      var problem: Problem? = null
+      val problemName = name.split("#")[0]
       try {
         if (name.contains("#")) {
-          val problemName = name.split("#")[0]
-          val objectArgs = GetObjectArgs.builder()
-              .bucket(bucket)
-              .`object`(problemName)
-              .build()
-          return BytesClassLoader<Problem>(ProcessorApplication::class.java.classLoader)
-              .loadClassFromBytes(minioClient.getObject(objectArgs).readAllBytes())
+          val problemBytes = minioAdapter.download(problemName) ?: return null
+          problem = BytesClassLoader<Problem>(ProcessorApplication::class.java.classLoader)
+              .loadClassFromBytes(problemBytes)
               .getDeclaredConstructor().newInstance()
         }
       } catch (e: Exception) {
       }
-      return standardProblems.getProblem(name)
+      if (problem != null) return problem
+      return standardProblems.getProblem(name) ?: throw ProviderNotFoundException(problemName, RuntimeException())
     }
 
     override fun getReferenceSet(name: String): NondominatedPopulation? {
+      var nondominatedPopulation: NondominatedPopulation? = null
+      val referenceSetName = name.split("#")[1]
       try {
         if (name.contains("#")) {
-          val referenceSetName = name.split("#")[1]
-          val objectArgs = GetObjectArgs.builder()
-              .bucket(bucket)
-              .`object`(referenceSetName)
-              .build()
-          val referenceSet = minioClient.getObject(objectArgs).readAllBytes().toString(Charset.forName("utf-8"))
-          return NondominatedPopulation(PopulationIO.readObjectives(BufferedReader(StringReader(referenceSet))))
+          val referecenSetBytes = minioAdapter.download(referenceSetName) ?: return null
+          val referenceSet = referecenSetBytes.toString(Charset.defaultCharset())
+          nondominatedPopulation = NondominatedPopulation(PopulationIO.readObjectives(BufferedReader(StringReader(referenceSet))))
         }
       } catch (e: Exception) {
       }
+      if (nondominatedPopulation != null) return nondominatedPopulation
       return standardProblems.getReferenceSet(name)
+          ?: throw ProviderNotFoundException(referenceSetName, RuntimeException())
     }
 
   }

@@ -6,7 +6,6 @@ import org.moeawebframework.processor.QueueItemNotFoundException
 import org.moeawebframework.processor.dao.QueueItemDAO
 import org.moeawebframework.processor.entities.QueueItem
 import org.moeawebframework.processor.processors
-import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.stereotype.Controller
@@ -15,7 +14,6 @@ import java.util.concurrent.ExecutorService
 @Controller
 @MessageMapping("user")
 class UserController(
-    private val rabbitTemplate: RabbitTemplate,
     private val executorService: ExecutorService,
     private val queueItemDAO: QueueItemDAO,
     private val processor: Processor
@@ -27,7 +25,11 @@ class UserController(
     executorService.submit {
       try {
         queueItem.results = processor.startProcessing(queueItem).toJson()
-        queueItem.status = "processed"
+        if (processors[queueItem.rabbitId]?.isCanceled!!) {
+          queueItem.status = "waiting"
+        } else {
+          queueItem.status = "processed"
+        }
         runBlocking {
           queueItemDAO.save(queueItem)
         }

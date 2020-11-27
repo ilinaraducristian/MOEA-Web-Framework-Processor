@@ -29,7 +29,11 @@ class PublicController(
     executorService.submit {
       try {
         queueItem.results = processor.startProcessing(queueItem).toJson()
-        queueItem.status = "processed"
+        if (processors[queueItem.rabbitId]?.isCanceled!!) {
+          queueItem.status = "waiting"
+        } else {
+          queueItem.status = "processed"
+        }
         runBlocking {
           redisAdapter.set(queueItem.rabbitId, queueItem)
         }
