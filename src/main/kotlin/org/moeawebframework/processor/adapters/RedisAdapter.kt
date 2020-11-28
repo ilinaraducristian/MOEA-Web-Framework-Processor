@@ -1,4 +1,4 @@
-package org.moeawebframework.processor
+package org.moeawebframework.processor.adapters
 
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle

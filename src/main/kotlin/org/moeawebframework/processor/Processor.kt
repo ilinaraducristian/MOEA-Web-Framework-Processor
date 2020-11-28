@@ -11,6 +11,7 @@ import org.moeaframework.core.spi.AlgorithmFactory
 import org.moeaframework.core.spi.ProblemFactory
 import org.moeaframework.core.spi.ProviderNotFoundException
 import org.moeaframework.problem.StandardProblems
+import org.moeawebframework.processor.adapters.MinioAdapter
 import org.moeawebframework.processor.configurations.default_algorithms
 import org.moeawebframework.processor.configurations.default_problems
 import org.moeawebframework.processor.entities.QueueItem

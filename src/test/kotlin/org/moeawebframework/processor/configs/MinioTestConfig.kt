@@ -1,7 +1,7 @@
 package org.moeawebframework.processor.configs
 
 import org.mockito.Mockito
-import org.moeawebframework.processor.MinioAdapter
+import org.moeawebframework.processor.adapters.MinioAdapter
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 

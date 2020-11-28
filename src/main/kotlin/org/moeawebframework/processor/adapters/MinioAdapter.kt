@@ -1,4 +1,4 @@
-package org.moeawebframework.processor
+package org.moeawebframework.processor.adapters
 
 import io.minio.GetObjectArgs
 import io.minio.MinioClient

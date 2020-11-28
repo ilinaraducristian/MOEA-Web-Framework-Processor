@@ -3,7 +3,7 @@ package org.moeawebframework.processor.controllers
 import kotlinx.coroutines.runBlocking
 import org.moeawebframework.processor.Processor
 import org.moeawebframework.processor.QueueItemNotFoundException
-import org.moeawebframework.processor.RedisAdapter
+import org.moeawebframework.processor.adapters.RedisAdapter
 import org.moeawebframework.processor.entities.QueueItem
 import org.moeawebframework.processor.processors
 import org.springframework.amqp.rabbit.core.RabbitTemplate

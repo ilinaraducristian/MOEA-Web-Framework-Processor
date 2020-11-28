@@ -3,6 +3,7 @@ package org.moeawebframework.processor
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.moeawebframework.processor.adapters.RedisAdapter
 import org.moeawebframework.processor.dto.QueueItemDTO
 import org.moeawebframework.processor.entities.QueueItem
 import org.springframework.beans.factory.annotation.Autowired

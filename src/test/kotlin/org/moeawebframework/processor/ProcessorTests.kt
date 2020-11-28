@@ -2,6 +2,7 @@ package org.moeawebframework.processor
 
 import org.junit.jupiter.api.*
 import org.moeaframework.core.spi.ProviderNotFoundException
+import org.moeawebframework.processor.adapters.MinioAdapter
 import org.moeawebframework.processor.configs.MinioTestConfig
 import org.moeawebframework.processor.configs.RabbitMQTestConfig
 import org.moeawebframework.processor.configurations.default_algorithms
